@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 #include "stb_image.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -15,8 +16,18 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void processInput(GLFWwindow *window);
 
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+
+Camera camera(glm::vec3(0.0f,0.0f,3.0f));
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+bool mouseFirstMove = true;
+float lastMouseX;
+float lastMouseY;
 
 int main() 
 {
@@ -43,6 +54,7 @@ int main()
 
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -91,23 +103,14 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	//GLuint indices[] = {  // note that we start from 0!
-	//	0, 1, 3,   // first triangle
-	//	1, 2, 3    // second triangle
-	//};
-
 	GLuint vbo, vao, texture1,texture2;
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 
 	glBindVertexArray(vao);
-	
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -172,9 +175,14 @@ int main()
 
 	while(!glfwWindowShouldClose(window))
 	{
+
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		processInput(window);
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -185,33 +193,21 @@ int main()
 		shader.Use();
 
 	
-		glm::mat4 view;
-		glm::mat4 projection;
+		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 projection = camera.GetProjectionMatrix();
 
-		float radius = 10.0f;
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
-		view = glm::lookAt(glm::vec3(camX,0.0f,camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-		projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		shader.SetMatrix("view", &view[0][0]);
 		shader.SetMatrix("projection", &projection[0][0]);
 
 		glBindVertexArray(vao);
-
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model;
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20 * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			shader.SetMatrix("model", glm::value_ptr(model));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f,0.0f,0.0f));
+		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+		shader.SetMatrix("model", glm::value_ptr(model));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -232,4 +228,39 @@ void processInput(GLFWwindow *window)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
+	else if(glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camera.ProcessKeyBoard(Camera_Movement::FORWARD, deltaTime);
+	}
+	else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camera.ProcessKeyBoard(Camera_Movement::BACKWARD, deltaTime);
+	}
+	else if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera.ProcessKeyBoard(Camera_Movement::LEFT, deltaTime);
+	}
+	else if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera.ProcessKeyBoard(Camera_Movement::RIGHT, deltaTime);
+	}
+}
+
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+	if(mouseFirstMove)
+	{
+		lastMouseX = xpos;
+		lastMouseY = ypos;
+		mouseFirstMove = false;
+	}
+
+	float xoffset = xpos - lastMouseX;
+	float yoffset = ypos - lastMouseY;
+
+	lastMouseX = xpos;
+	lastMouseY = ypos;
+
+	camera.ProcessMouse(-xoffset, yoffset, deltaTime);
 }
