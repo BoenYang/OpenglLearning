@@ -41,6 +41,12 @@
     <None Include="lightshader.fs">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="lampshader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="lampshader.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

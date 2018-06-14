@@ -84,6 +84,12 @@ void Shader::Use()
 	glUseProgram(shaderProgram);
 }
 
+void Shader::SetFloat(const std::string& name, float v)
+{
+	glUniform1f(glGetUniformLocation(shaderProgram, name.c_str()), v);
+}
+
+
 void Shader::SetVec2(const std::string& name, float v1, float v2)
 {
 	glUniform2f(glGetUniformLocation(shaderProgram, name.c_str()), v1, v2);

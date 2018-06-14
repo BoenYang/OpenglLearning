@@ -151,6 +151,8 @@
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="lampshader.fs" />
+    <None Include="lampshader.vs" />
     <None Include="lightshader.fs" />
     <None Include="lightshader.vs" />
     <None Include="shader.fs" />
