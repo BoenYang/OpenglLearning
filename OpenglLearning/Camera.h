@@ -27,7 +27,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 worldUp;
 	float moveSpeed = 2.5f;
-	float mouseSensitivity = 0.2f;
+	float mouseSensitivity = 0.15f;
 
 	Camera(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 

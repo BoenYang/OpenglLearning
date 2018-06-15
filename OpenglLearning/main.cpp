@@ -143,6 +143,27 @@ int main()
 	GLuint diffuse = load_texture("container2.png");
 	GLuint specular = load_texture("container2_specular.png");
 
+	glm::vec3 pointLightPos[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
+	// positions all containers
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	while(!glfwWindowShouldClose(window))
 	{
 
@@ -160,45 +181,87 @@ int main()
 		glm::mat4 projection = camera.GetProjectionMatrix();
 
 
-		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
 		lightShader.Use();
 		lightShader.SetMatrix("view", &view[0][0]);
 		lightShader.SetMatrix("projection", &projection[0][0]);
-		lightShader.SetMatrix("model", glm::value_ptr(model));
-		lightShader.SetInt("material.diffuse",0);
+
+		lightShader.SetVec3("viewPos", camera.pos.x, camera.pos.y, camera.pos.z);
+
+		lightShader.SetInt("material.diffuse", 0);
 		lightShader.SetInt("material.specular", 1);
 		lightShader.SetFloat("material.shiniess", 64);
 		lightShader.SetFloat("material.specularStrength", specularStrength);
+
 		lightShader.SetVec3("ambientColor", ambientColor.r, ambientColor.g, ambientColor.b);
 		lightShader.SetFloat("ambientStrength", ambientStrength);
-		lightShader.SetVec3("viewPos", camera.pos.x, camera.pos.y, camera.pos.z);
-		lightShader.SetVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
-		lightShader.SetVec3("light.diffuse", 1.0f, 1.0f, 1.0f);
+
+		lightShader.SetVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+		lightShader.SetVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+		// point light 1
+		lightShader.SetVec3("pointLights[0].position", pointLightPos[0].x, pointLightPos[0].y, pointLightPos[0].z);
+		lightShader.SetVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+		lightShader.SetFloat("pointLights[0].constant", 1.0f);
+		lightShader.SetFloat("pointLights[0].linear", 0.09);
+		lightShader.SetFloat("pointLights[0].quadratic", 0.032);
+		// point light 2
+		lightShader.SetVec3("pointLights[1].position", pointLightPos[1].x, pointLightPos[1].y, pointLightPos[1].z);
+		lightShader.SetVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+		lightShader.SetFloat("pointLights[1].constant", 1.0f);
+		lightShader.SetFloat("pointLights[1].linear", 0.09);
+		lightShader.SetFloat("pointLights[1].quadratic", 0.032);
+		// point light 3
+		lightShader.SetVec3("pointLights[2].position", pointLightPos[2].x, pointLightPos[2].y, pointLightPos[2].z);
+		lightShader.SetVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+		lightShader.SetFloat("pointLights[2].constant", 1.0f);
+		lightShader.SetFloat("pointLights[2].linear", 0.09);
+		lightShader.SetFloat("pointLights[2].quadratic", 0.032);
+		// point light 4
+		lightShader.SetVec3("pointLights[3].position", pointLightPos[3].x, pointLightPos[3].y, pointLightPos[3].z);
+		lightShader.SetVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+		lightShader.SetFloat("pointLights[3].constant", 1.0f);
+		lightShader.SetFloat("pointLights[3].linear", 0.09);
+		lightShader.SetFloat("pointLights[3].quadratic", 0.032);
+
+		// spotLight
+		lightShader.SetVec3("spotLight.position", camera.pos.x,camera.pos.y,camera.pos.z);
+		lightShader.SetVec3("spotLight.direction", camera.front.x,camera.front.y,camera.front.z);
+		lightShader.SetVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+		lightShader.SetFloat("spotLight.constant", 1.0f);
+		lightShader.SetFloat("spotLight.linear", 0.09);
+		lightShader.SetFloat("spotLight.quadratic", 0.032);
+		lightShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		lightShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuse);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specular);
 
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (int i = 0; i < 10; i++)
+		{
+			glm::mat4 model;
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			lightShader.SetMatrix("model", glm::value_ptr(model));
 
+			glBindVertexArray(vao);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 	
 
-		
-		//lightPos = glm::vec3(2.0f*sin(glfwGetTime()), 0.0f, 2.0f * cos(glfwGetTime()));
-
-		glm::mat4 model1;
-		model1 = glm::translate(model1, lightPos);
-		model1 = glm::scale(model1, glm::vec3(0.2f));
-		lampShader.Use();
-		lampShader.SetMatrix("view", &view[0][0]);
-		lampShader.SetMatrix("projection", &projection[0][0]);
-		lampShader.SetMatrix("model", glm::value_ptr(model1));
-		glBindVertexArray(lightVao);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (int i = 0; i < 4; i++)
+		{
+			glm::mat4 model1;
+			model1 = glm::translate(model1, pointLightPos[i]);
+			model1 = glm::scale(model1, glm::vec3(0.2f));
+			lampShader.Use();
+			lampShader.SetMatrix("view", &view[0][0]);
+			lampShader.SetMatrix("projection", &projection[0][0]);
+			lampShader.SetMatrix("model", glm::value_ptr(model1));
+			glBindVertexArray(lightVao);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 
 		glfwSwapBuffers(window);
@@ -254,7 +317,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	lastMouseX = xpos;
 	lastMouseY = ypos;
 
-	//camera.ProcessMouse(-xoffset, yoffset, deltaTime);
+	camera.ProcessMouse(-xoffset, yoffset, deltaTime);
 }
 
 GLuint load_texture(char const* path)
