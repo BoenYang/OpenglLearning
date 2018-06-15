@@ -155,6 +155,8 @@
     <None Include="lampshader.vs" />
     <None Include="lightshader.fs" />
     <None Include="lightshader.vs" />
+    <None Include="materialshader.fs" />
+    <None Include="materialshader.vs" />
     <None Include="shader.fs" />
     <None Include="shader.vs" />
   </ItemGroup>
