@@ -32,9 +32,8 @@ float lastMouseX;
 float lastMouseY;
 
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-glm::vec3 ambientColor(0.5f,0.5f,0.5f);
-float ambientStrength = 0.1f;
-float specularStrength = 0.5f;
+glm::vec3 ambientColor(1.0f,1.0f,1.0f);
+float ambientStrength = 1.0f;
 
 int main() 
 {
@@ -87,7 +86,15 @@ int main()
 
 		shader.SetMatrix("projection", &projection[0][0]);
 		shader.SetMatrix("view", &view[0][0]);
+		shader.SetVec3("viewPos", camera.pos.x, camera.pos.y, camera.pos.z);
 		
+		shader.SetVec3("ambientColor", ambientColor.r, ambientColor.g, ambientColor.b);
+		shader.SetFloat("ambientStrength", ambientStrength);
+
+		shader.SetVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+		shader.SetVec3("dirLight.color", 0.5f, 0.5f, 0.5f);
+
+		shader.SetFloat("material.shiniess", 64);
 
 		glm::mat4 model;
 		model = glm::translate(model, glm::vec3(0.0f, -2.25f, 0.0f));
