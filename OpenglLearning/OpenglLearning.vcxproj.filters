@@ -65,6 +65,12 @@
     <None Include="standershader.fs">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="screenshader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="screenshader.fs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

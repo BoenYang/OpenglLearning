@@ -162,6 +162,8 @@
     <None Include="lightshader.vs" />
     <None Include="materialshader.fs" />
     <None Include="materialshader.vs" />
+    <None Include="screenshader.fs" />
+    <None Include="screenshader.vs" />
     <None Include="shader.fs" />
     <None Include="shader.vs" />
     <None Include="standershader.fs" />
