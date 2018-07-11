@@ -1,10 +1,8 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 class Shader
 {
@@ -26,7 +24,7 @@ public:
 
 	void SetInt(const std::string &name, int v);
 
-	void SetMatrix(const std::string &name, float *mat);
+	void SetMatrix(const std::string &name,const glm::mat4 &mat) const;
 
 	~Shader();
 };

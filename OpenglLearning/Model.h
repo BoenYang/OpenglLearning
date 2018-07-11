@@ -4,16 +4,16 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
 #include "Mesh.h"
-
-
-using namespace std;
+#include "Transform.h"
 
 class Model
 {
 public:
 	vector<Mesh> meshes;
 	string directory;
+	Transform transform;
 	Model(char* path);
 	~Model();
 	void Draw(Shader shader);

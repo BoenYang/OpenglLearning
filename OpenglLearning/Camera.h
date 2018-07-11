@@ -13,12 +13,14 @@ enum Camera_Movement {
 	RIGHT
 };
 
+
 class Camera
 {
 public:
-	float fov = 45.0f;
-	float near = 0.1f;
-	float far = 100.0f;
+	static Camera main;
+	float fov;
+	float near;
+	float far;
 	float yaw;
 	float pitch;
 	glm::vec3 pos;

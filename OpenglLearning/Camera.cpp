@@ -5,6 +5,12 @@ const unsigned int SCR_HEIGHT = 600;
 
 Camera::Camera(glm::vec3 pos,glm::vec3 worldUp,float yaw, float pitch)
 {
+
+
+	this->fov = 45.0f;
+	this->near = 0.1f;
+	this->far = 100.0f;
+
 	this->front = glm::vec3(0.0f, 0.0f, -1.0f);
 	this->pos = pos;
 	this->worldUp = worldUp;

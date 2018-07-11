@@ -1,6 +1,9 @@
+#include <glm/glm.hpp>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
 #include "Shader.h"
-
-
 
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 {
@@ -110,9 +113,9 @@ void Shader::SetInt(const std::string& name, int v)
 	glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), v);
 }
 
-void Shader::SetMatrix(const std::string& name, float* mat)
+void Shader::SetMatrix(const std::string& name,const glm::mat4 &mat) const
 {
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, mat);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
 Shader::~Shader()

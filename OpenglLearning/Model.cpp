@@ -1,5 +1,10 @@
+#include <iostream>
+
+#include "Camera.h"
 #include "Model.h"
 #include "stb_image.h"
+
+using namespace std;
 
 unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);
 
@@ -14,6 +19,12 @@ Model::~Model()
 
 void Model::Draw(Shader shader)
 {
+	Camera camera = Camera::main;
+	shader.SetMatrix("model", transform.GetModelMatrix());
+	shader.SetMatrix("view", camera.GetViewMatrix());
+	shader.SetMatrix("projection", camera.GetProjectionMatrix());
+	shader.SetVec3("viewPos", camera.pos.x, camera.pos.y, camera.pos.z);
+
 	for (unsigned int i = 0; i < meshes.size(); i++)
 	{
 		meshes[i].Draw(shader);
